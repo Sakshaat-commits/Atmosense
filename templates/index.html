@@ -1,0 +1,878 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f6f8fc">
+
+    <title>ATMOSENSE — Environmental Intelligence</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+
+    <link rel="icon"
+          type="image/png"
+          href="{{ url_for('static', filename='favicon.png') }}">
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">A</div>
+
+            <div>
+                <h2>ATMOSENSE</h2>
+                <span>ENVIRONMENTAL INTELLIGENCE</span>
+            </div>
+        </div>
+
+        <div class="nav-heading">WORKSPACE</div>
+
+        <nav class="navigation">
+
+            <a class="nav-item active" href="#overview">
+                <span>◫</span>
+                Overview
+            </a>
+
+            <a class="nav-item" href="#sensors">
+                <span>⌁</span>
+                Sensor Network
+            </a>
+
+            <a class="nav-item" href="#air-quality">
+                <span>◎</span>
+                Air Quality
+            </a>
+
+            <a class="nav-item" href="#trends">
+                <span>⌁</span>
+                Environmental Trends
+            </a>
+
+            <a class="nav-item" href="#diagnostics">
+                <span>⌘</span>
+                Diagnostics
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="system-status">
+                <span class="status-dot" id="sidebarDot"></span>
+
+                <div>
+                    <strong id="sidebarStatus">Awaiting telemetry</strong>
+                    <small id="sidebarDevice">Device not detected</small>
+                </div>
+            </div>
+
+            <div class="sidebar-version">
+                ATMOSENSE DASHBOARD
+                <span>v1.0 · LOCAL MONITORING</span>
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar" id="overview">
+
+            <div>
+                <div class="eyebrow">
+                    ENVIRONMENTAL MONITORING / OVERVIEW
+                </div>
+
+                <h1>Environmental Overview</h1>
+
+                <p class="subtitle">
+                    Real-time visibility into your surrounding environment.
+                </p>
+            </div>
+
+            <div class="topbar-actions">
+
+                <div class="connection">
+                    <span class="connection-dot" id="connectionDot"></span>
+                    <span id="connectionText">Waiting for data</span>
+                </div>
+
+                <button class="icon-button"
+                        id="refreshButton"
+                        type="button"
+                        title="Refresh readings"
+                        aria-label="Refresh sensor readings">
+                    ↻
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- HERO -->
+        <section class="hero-card">
+
+            <div class="hero-copy">
+
+                <div class="hero-label">
+                    <span class="hero-live-dot"></span>
+                    CURRENT ENVIRONMENT
+                </div>
+
+                <div class="temperature">
+                    <span id="temperature">--</span>
+                    <small>°C</small>
+                </div>
+
+                <h2 id="condition">
+                    Waiting for sensor readings
+                </h2>
+
+                <p id="temperatureDescription">
+                    Temperature data will appear when a packet is received.
+                </p>
+
+                <div class="hero-meta">
+
+                    <span>
+                        ◷
+                        <span id="lastUpdate">No recent update</span>
+                    </span>
+
+                    <span>
+                        Device:
+                        <strong id="deviceId">--</strong>
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="hero-metrics">
+
+                <div class="hero-metric">
+
+                    <div class="metric-icon humidity-icon">≈</div>
+
+                    <small>HUMIDITY</small>
+
+                    <strong>
+                        <span id="humidity">--</span>
+                        <span class="metric-unit">%</span>
+                    </strong>
+
+                    <div class="metric-caption">
+                        Relative humidity
+                    </div>
+
+                </div>
+
+
+                <div class="hero-metric">
+
+                    <div class="metric-icon pressure-icon">↗</div>
+
+                    <small>PRESSURE</small>
+
+                    <strong>
+                        <span id="pressure">--</span>
+                    </strong>
+
+                    <div class="metric-caption">
+                        hPa atmospheric
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SENSOR NETWORK -->
+        <section id="sensors">
+
+            <div class="section-heading">
+
+                <div>
+                    <div class="eyebrow">CONNECTED SENSORS</div>
+                    <h2>Sensor Network</h2>
+                </div>
+
+                <span class="section-note">
+                    Latest reported readings
+                </span>
+
+            </div>
+
+
+            <div class="sensor-grid">
+
+                <!-- TEMPERATURE -->
+                <article class="sensor-card">
+
+                    <div class="card-top">
+
+                        <div class="sensor-icon temperature-icon">
+                            °C
+                        </div>
+
+                        <span class="live-label" id="bmpBadge">
+                            WAITING
+                        </span>
+
+                    </div>
+
+                    <p>Temperature</p>
+
+                    <h2>
+                        <span id="tempCard">--</span>
+                        <small>°C</small>
+                    </h2>
+
+                    <div class="card-note">
+                        BMP280 sensor
+                    </div>
+
+                    <div class="mini-chart">
+                        <canvas id="temperatureChart"></canvas>
+                    </div>
+
+                </article>
+
+
+                <!-- HUMIDITY -->
+                <article class="sensor-card">
+
+                    <div class="card-top">
+
+                        <div class="sensor-icon humidity-icon">
+                            RH
+                        </div>
+
+                        <span class="live-label" id="dhtBadge">
+                            WAITING
+                        </span>
+
+                    </div>
+
+                    <p>Humidity</p>
+
+                    <h2>
+                        <span id="humidityCard">--</span>
+                        <small>%</small>
+                    </h2>
+
+                    <div class="card-note">
+                        DHT11 sensor
+                    </div>
+
+                    <div class="progress-bar">
+                        <div id="humidityProgress"></div>
+                    </div>
+
+                </article>
+
+
+                <!-- PRESSURE -->
+                <article class="sensor-card">
+
+                    <div class="card-top">
+
+                        <div class="sensor-icon pressure-icon">
+                            hPa
+                        </div>
+
+                        <span class="live-label" id="pressureBadge">
+                            WAITING
+                        </span>
+
+                    </div>
+
+                    <p>Atmospheric Pressure</p>
+
+                    <h2>
+                        <span id="pressureCard">--</span>
+                    </h2>
+
+                    <div class="card-note">
+                        BMP280 · hPa
+                    </div>
+
+                    <div class="card-bottom-note">
+                        Barometric reading
+                    </div>
+
+                </article>
+
+
+                <!-- AIR QUALITY -->
+                <article class="sensor-card">
+
+                    <div class="card-top">
+
+                        <div class="sensor-icon air-icon">
+                            AQ
+                        </div>
+
+                        <span class="live-label" id="airBadge">
+                            WAITING
+                        </span>
+
+                    </div>
+
+                    <p>MQ135 Air Sensor</p>
+
+                    <h2 class="compact-value" id="mqState">
+                        --
+                    </h2>
+
+                    <div class="card-note" id="mqDescription">
+                        Sensor status
+                    </div>
+
+                    <span class="quality-good" id="smokeLevel">
+                        No classification
+                    </span>
+
+                </article>
+
+
+                <!-- RAIN -->
+                <article class="sensor-card">
+
+                    <div class="card-top">
+
+                        <div class="sensor-icon rain-icon">
+                            ☂
+                        </div>
+
+                        <span class="live-label" id="rainBadge">
+                            WAITING
+                        </span>
+
+                    </div>
+
+                    <p>Rain Sensor</p>
+
+                    <h2>
+                        <span id="rainWetness">--</span>
+                        <small>%</small>
+                    </h2>
+
+                    <div class="card-note" id="rainStatus">
+                        Waiting for rain data
+                    </div>
+
+                    <div class="progress-bar rain-progress">
+                        <div id="rainProgress"></div>
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- ENVIRONMENTAL TRENDS AND DETAILS -->
+        <section class="lower-grid" id="trends">
+
+
+            <!-- TREND CHART -->
+            <article class="panel trend-panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <div class="panel-label">
+                            HISTORICAL TELEMETRY
+                        </div>
+
+                        <h2>Environmental Trends</h2>
+                    </div>
+
+                    <span class="time-range">
+                        LAST 30 PACKETS
+                    </span>
+
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+
+                <div class="chart-legend-note">
+                    Temperature and humidity use different units.
+                </div>
+
+            </article>
+
+
+            <!-- AIR QUALITY -->
+            <article class="panel air-panel" id="air-quality">
+
+                <div class="panel-header">
+
+                    <div>
+                        <div class="panel-label">
+                            GAS SENSOR ANALYSIS
+                        </div>
+
+                        <h2>Air Quality Details</h2>
+                    </div>
+
+                    <span class="panel-symbol">◎</span>
+
+                </div>
+
+
+                <div class="air-status-row">
+
+                    <div>
+                        <span class="small-muted">
+                            MQ135 STATUS
+                        </span>
+
+                        <strong id="mqDetailStatus">
+                            Waiting
+                        </strong>
+                    </div>
+
+                    <span class="status-pill" id="mqDetailBadge">
+                        PENDING
+                    </span>
+
+                </div>
+
+
+                <div class="gas-grid">
+
+                    <div class="gas-item">
+                        <span>CO₂ estimate</span>
+                        <strong id="co2">--</strong>
+                    </div>
+
+                    <div class="gas-item">
+                        <span>CO estimate</span>
+                        <strong id="co">--</strong>
+                    </div>
+
+                    <div class="gas-item">
+                        <span>NH₄ estimate</span>
+                        <strong id="nh4">--</strong>
+                    </div>
+
+                    <div class="gas-item">
+                        <span>Alcohol estimate</span>
+                        <strong id="alcohol">--</strong>
+                    </div>
+
+                    <div class="gas-item">
+                        <span>Toluene estimate</span>
+                        <strong id="toluene">--</strong>
+                    </div>
+
+                    <div class="gas-item">
+                        <span>Acetone estimate</span>
+                        <strong id="acetone">--</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="insight">
+
+                    <div class="insight-icon blue">i</div>
+
+                    <div>
+                        <strong>Measurement note</strong>
+
+                        <p>
+                            Gas estimates depend on sensor calibration and
+                            firmware. They are not certified air-quality
+                            measurements.
+                        </p>
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- RAIN CONDITIONS -->
+            <article class="panel outlook-panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <div class="panel-label">
+                            PRECIPITATION MONITOR
+                        </div>
+
+                        <h2>Rain Conditions</h2>
+                    </div>
+
+                    <div class="prediction-badge">
+                        LIVE
+                    </div>
+
+                </div>
+
+
+                <div class="rain-illustration">☁</div>
+
+                <div class="rain-condition" id="rainCondition">
+                    Waiting for data
+                </div>
+
+                <p class="rain-description" id="rainDescription">
+                    Rain sensor status will appear here.
+                </p>
+
+
+                <div class="rain-stat-row">
+                    <span>Surface wetness</span>
+
+                    <strong>
+                        <span id="rainWetnessDetail">--</span>%
+                    </strong>
+                </div>
+
+
+                <div class="rain-stat-row">
+                    <span>Raw sensor value</span>
+
+                    <strong id="rainADC">--</strong>
+                </div>
+
+
+                <div class="rain-stat-row">
+                    <span>Uno uptime</span>
+
+                    <strong id="uptime">--</strong>
+                </div>
+
+
+                <div class="insight">
+
+                    <div class="insight-icon purple">!</div>
+
+                    <div>
+                        <strong>Not a weather forecast</strong>
+
+                        <p>
+                            The rain sensor reports local plate wetness and
+                            state, not a meteorological probability of rain.
+                        </p>
+                    </div>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- DIAGNOSTICS -->
+        <section class="panel diagnostics-panel" id="diagnostics">
+
+            <div class="panel-header">
+
+                <div>
+                    <div class="panel-label">SYSTEM HEALTH</div>
+                    <h2>Telemetry Diagnostics</h2>
+                </div>
+
+                <span class="time-range">
+                    FLASK RECEIVER
+                </span>
+
+            </div>
+
+
+            <div class="diagnostic-grid">
+
+                <div class="diagnostic-item">
+                    <span>Packets received</span>
+                    <strong id="pktOk">0</strong>
+                </div>
+
+                <div class="diagnostic-item">
+                    <span>Bad packets</span>
+                    <strong id="pktBad">--</strong>
+                </div>
+
+                <div class="diagnostic-item">
+                    <span>Sequence gaps</span>
+                    <strong id="pktMissed">0</strong>
+                </div>
+
+                <div class="diagnostic-item">
+                    <span>Last packet number</span>
+                    <strong id="packetNumber">--</strong>
+                </div>
+
+            </div>
+
+
+            <div class="diagnostic-footer">
+
+                <span>
+                    Data transport:
+                    <strong>HTTP / Flask</strong>
+                </span>
+
+                <span>
+                    Refresh interval:
+                    <strong>2 seconds</strong>
+                </span>
+
+                <span id="serverMessage">
+                    Waiting for first packet
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- FOOTER -->
+        <footer>
+            <span>ATMOSENSE</span>
+            · ENVIRONMENTAL TELEMETRY
+
+            <span class="footer-separator">|</span>
+
+            LOCAL MONITORING DASHBOARD
+        </footer>
+
+    </main>
+
+</div>
+
+
+<!-- ========================================== -->
+<!-- ATMOSENSE AI CHAT WIDGET -->
+<!-- ========================================== -->
+
+<div class="ai-chat-widget">
+
+    <!-- FLOATING LAUNCHER -->
+    <button type="button"
+            class="ai-launcher"
+            id="aiLauncher"
+            aria-label="Open ATMOSENSE AI"
+            aria-expanded="false"
+            aria-controls="aiChatPanel">
+
+        <span class="ai-launcher-icon">✦</span>
+
+        <span>Ask ATMOSENSE AI</span>
+
+    </button>
+
+
+    <!-- CHAT PANEL -->
+    <section class="ai-chat-panel"
+             id="aiChatPanel"
+             aria-label="ATMOSENSE AI assistant"
+             aria-modal="false"
+             hidden>
+
+
+        <!-- CHAT HEADER -->
+        <header class="ai-chat-header">
+
+            <div class="ai-header-brand">
+
+                <div class="ai-avatar">✦</div>
+
+                <div>
+                    <strong>ATMOSENSE AI</strong>
+
+                    <span>
+                        <span class="ai-status-dot"></span>
+                        Environmental intelligence
+                    </span>
+                </div>
+
+            </div>
+
+
+            <!-- HEADER ACTIONS -->
+            <div class="ai-header-actions">
+
+                <button type="button"
+                        id="aiFullscreen"
+                        title="Expand chat"
+                        aria-label="Expand chat"
+                        aria-pressed="false">
+                    ⛶
+                </button>
+
+                <button type="button"
+                        id="aiClear"
+                        title="Clear conversation"
+                        aria-label="Clear conversation">
+                    ↺
+                </button>
+
+                <button type="button"
+                        id="aiClose"
+                        title="Close chat"
+                        aria-label="Close chat">
+                    ×
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- CHAT MESSAGES -->
+        <div class="ai-chat-messages"
+             id="aiMessages"
+             aria-live="polite"
+             aria-relevant="additions text">
+
+            <!-- INITIAL WELCOME MESSAGE -->
+            <div class="ai-message assistant">
+
+                <div class="ai-message-avatar">✦</div>
+
+                <div class="ai-message-content">
+
+                    <div class="ai-message-name">
+                        ATMOSENSE AI
+                    </div>
+
+                    <div class="ai-message-bubble">
+
+                        <p>
+                            Hello! I'm your environmental intelligence
+                            assistant.
+                        </p>
+
+                        <p>
+                            I can analyse your live sensor readings, explain
+                            environmental conditions, and help evaluate
+                            agricultural suitability.
+                        </p>
+
+                        <p>
+                            What would you like to know?
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SUGGESTED QUESTIONS -->
+        <div class="ai-suggestions" id="aiSuggestions">
+
+            <button type="button"
+                    data-question="Analyse my current environmental conditions.">
+                Analyse environment
+            </button>
+
+            <button type="button"
+                    data-question="Are the current conditions suitable for growing strawberries?">
+                Strawberry suitability
+            </button>
+
+            <button type="button"
+                    data-question="Explain my current air quality readings.">
+                Analyse air quality
+            </button>
+
+        </div>
+
+
+        <!-- VOICE STATUS -->
+        <div class="ai-voice-status"
+             id="aiVoiceStatus"
+             role="status"
+             aria-live="polite"></div>
+
+
+        <!-- CHAT INPUT -->
+        <form class="ai-chat-input-area" id="aiChatForm">
+
+            <!-- MICROPHONE BUTTON -->
+            <button type="button"
+                    class="ai-mic-button"
+                    id="aiMic"
+                    aria-label="Start voice input"
+                    aria-pressed="false"
+                    title="Speak to ATMOSENSE">
+
+                <span aria-hidden="true">🎙</span>
+
+            </button>
+
+
+            <!-- TEXT INPUT -->
+            <input type="text"
+                   id="aiInput"
+                   placeholder="Ask about your environment..."
+                   autocomplete="off"
+                   maxlength="1000"
+                   aria-label="Type your question"
+                   required>
+
+
+            <!-- SEND BUTTON -->
+            <button type="submit"
+                    id="aiSend"
+                    aria-label="Send message">
+                ↑
+            </button>
+
+        </form>
+
+
+        <!-- FOOTER -->
+        <div class="ai-chat-footer">
+            Powered by Groq · Whisper · Orpheus Hannah
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- DASHBOARD JAVASCRIPT -->
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+
+</body>
+</html>
